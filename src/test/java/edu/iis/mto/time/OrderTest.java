@@ -1,5 +1,7 @@
 package edu.iis.mto.time;
 
+import java.time.LocalDateTime;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,11 +19,12 @@ public class OrderTest {
         order = new Order();
     }
 
-    @Test
-    public void confirmShouldThrowExceptiomIfOrderExpired() {
+    @Test(expected = OrderExpiredException.class)
+    public void confirmShouldThrowExceptiomIfOrderIsSubmittedMorThan24HoursAgo() {
+        TestableClock.timeTravel(LocalDateTime.parse("2018-01-01T00:00:00"));
         order.submit();
-
-        thrown.expect(OrderExpiredException.class);
+        TestableClock.timeTravel(LocalDateTime.parse("2018-01-03T00:00:00"));
+        order.confirm();
     }
 
 }
