@@ -1,21 +1,17 @@
 package edu.iis.mto.time;
 
-import java.time.OffsetDateTime;
+import static java.time.temporal.ChronoUnit.HOURS;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.Hours;
-import org.joda.time.LocalDateTime;
 
 public class Order {
 
     private static final int VALID_PERIOD_HOURS = 24;
     private State orderState;
     private List<OrderItem> items = new ArrayList<>();
-    private DateTime subbmitionDate;
-    private static final ClockTimeTravel clockTimeTravel = new ClockTimeTravel(LocalDateTime.now(), OffsetDateTime.now()
-                                                                                                                  .getOffset());
+    private LocalDateTime subbmitionDate;
 
     public Order() {
         orderState = State.CREATED;
@@ -23,24 +19,21 @@ public class Order {
 
     public void addItem(OrderItem item) {
         requireState(State.CREATED, State.SUBMITTED);
-
         items.add(item);
         orderState = State.CREATED;
-
     }
 
     public void submit() {
         requireState(State.CREATED);
 
         orderState = State.SUBMITTED;
-        subbmitionDate = new DateTime();
+        subbmitionDate = TestableClock.getNow();
 
     }
 
     public void confirm() {
         requireState(State.SUBMITTED);
-        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, new DateTime())
-                                               .getHours();
+        long hoursElapsedAfterSubmittion = HOURS.between(subbmitionDate, TestableClock.getNow());
         if (hoursElapsedAfterSubmittion > VALID_PERIOD_HOURS) {
             orderState = State.CANCELLED;
             throw new OrderExpiredException();

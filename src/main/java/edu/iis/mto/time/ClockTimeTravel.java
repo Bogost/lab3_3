@@ -5,26 +5,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Objects;
 
 public final class ClockTimeTravel extends Clock {
-
-    private static void log(Object msg) {
-        System.out.println(Objects.toString(msg));
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        ClockTimeTravel timeTravel = new ClockTimeTravel(LocalDateTime.parse("2018-12-25T00:00:00"), ZoneOffset.of("Z"));
-        log(timeTravel.instant());
-        log("Sleep for 5 seconds...");
-        Thread.currentThread()
-              .sleep(3000);
-        log(timeTravel.instant());
-        Thread.currentThread()
-              .sleep(3000);
-        log(timeTravel.instant());
-        log("Done.");
-    }
 
     public ClockTimeTravel(LocalDateTime t0, ZoneOffset zoneOffset) {
         this.zoneOffset = zoneOffset;
